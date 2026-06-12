@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTO Roundtable 2026 - Poll Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F8FD; --card: #FFFFFF; --ink: #14223D; --ink-soft: #5A6B85;
+    --ink-faint: #97A3B8; --line: #E4EAF3; --track: #EAF0F8;
+    --brand: #0047C4; --navy: #002F6C;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg);
+    color: var(--ink); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 56px 24px 80px; }
+  header { margin-bottom: 36px; }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--brand); margin-bottom: 10px; }
+  h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 10px; color: var(--navy); }
+  .sub { font-size: 15px; color: var(--ink-soft); max-width: 580px; }
+  .tabs { display: flex; gap: 6px; margin: 32px 0 8px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .tab { appearance: none; border: none; background: none; cursor: pointer; font-family: inherit;
+    font-size: 14px; font-weight: 600; color: var(--ink-faint); padding: 12px 16px; position: relative; transition: color .18s ease; }
+  .tab:hover { color: var(--ink-soft); }
+  .tab.active { color: var(--ink); }
+  .tab.active::after { content: ''; position: absolute; left: 16px; right: 16px; bottom: -1px;
+    height: 2px; background: var(--tab-accent, var(--brand)); border-radius: 2px; }
+  .tab .dot { font-size: 9px; margin-right: 7px; vertical-align: middle; }
+  .panel { display: none; padding-top: 28px; }
+  .panel.active { display: block; animation: fade .3s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px 26px; margin-bottom: 18px; }
+  .q-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 6px; }
+  .q-title { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+  .q-meta { font-size: 12px; color: var(--ink-faint); white-space: nowrap; padding-top: 3px; }
+  .q-tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.03em;
+    padding: 3px 9px; border-radius: 20px; margin-bottom: 16px; }
+  .tag-single { background: var(--track); color: var(--ink-soft); }
+  .tag-multi  { background: #E1EBFB; color: #0A47BD; }
+  .tag-rating { background: #E0E9F6; color: #002F6C; }
+  /* horizontal bars (multi-select) */
+  .bars { display: flex; flex-direction: column; gap: 13px; margin-top: 4px; }
+  .bar-row { display: grid; grid-template-columns: 1fr; gap: 5px; }
+  .bar-label { display: flex; justify-content: space-between; gap: 14px; font-size: 13.5px; }
+  .bar-label .txt { color: var(--ink); }
+  .bar-label .val { color: var(--ink-soft); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .track { height: 9px; background: var(--track); border-radius: 6px; overflow: hidden; }
+  .fill { height: 100%; border-radius: 6px; width: 0; transition: width .7s cubic-bezier(.22,.61,.36,1); }
+  .bar-row.top .txt { font-weight: 600; }
+  /* pie (single-select) */
+  .pie-card { display: grid; grid-template-columns: 168px 1fr; gap: 30px; align-items: center; }
+  .pie-wrap { width: 168px; height: 168px; }
+  .pie-svg { width: 168px; height: 168px; display: block; transform-origin: center; }
+  .panel.active .pie-svg { animation: popIn .55s cubic-bezier(.22,.61,.36,1); }
+  @keyframes popIn { from { transform: scale(.84); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .pie-legend { display: flex; flex-direction: column; gap: 10px; }
+  .legend-row { display: grid; grid-template-columns: 12px 1fr auto; gap: 11px; align-items: center; font-size: 13.5px; }
+  .legend-row .sw { width: 11px; height: 11px; border-radius: 3px; }
+  .legend-row .txt { color: var(--ink); }
+  .legend-row.top .txt { font-weight: 600; }
+  .legend-row .val { color: var(--ink-soft); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  /* rating */
+  .rating-card { display: grid; grid-template-columns: 150px 1fr; gap: 28px; align-items: center; }
+  .rating-score { text-align: center; }
+  .rating-num { font-size: 52px; font-weight: 700; line-height: 1; letter-spacing: -0.03em; }
+  .rating-outof { font-size: 14px; color: var(--ink-faint); margin-top: 4px; }
+  .rating-dots { margin-top: 12px; font-size: 16px; letter-spacing: 2px; }
+  .rdist { display: flex; flex-direction: column; gap: 9px; }
+  .rdist-row { display: grid; grid-template-columns: 22px 1fr 46px; gap: 12px; align-items: center; font-size: 13px; }
+  .rdist-row .lvl { color: var(--ink-soft); font-weight: 600; text-align: center; }
+  .rdist-row .val { color: var(--ink-soft); text-align: right; font-variant-numeric: tabular-nums; }
+  footer { margin-top: 40px; font-size: 12px; color: var(--ink-faint); text-align: center; }
+  @media (max-width: 560px) {
+    .rating-card { grid-template-columns: 1fr; gap: 18px; }
+    .pie-card { grid-template-columns: 1fr; gap: 20px; justify-items: center; }
+    .pie-legend { width: 100%; }
+    h1 { font-size: 27px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">CTO Roundtable &middot; 2026 Edition</div>
+    <h1>What CTOs are really doing with AI</h1>
+    <p class="sub">Live poll results across three themes: how teams spend on AI, how they run agents in production, and how AI is reshaping the org.</p>
+  </header>
+  <div class="tabs" id="tabs"></div>
+  <div id="panels"></div>
+  <footer>Poll responses &middot; CTO Roundtable 2026 &middot; 22&ndash;29 respondents per question</footer>
+</div>
+<script>
+const DATA = {"Costs & AI": [{"pollId": 75722429, "question": "What is your total monthly AI spend? (Include everything)", "type": "single", "totalVotes": 22, "avgRating": null, "options": [{"label": "Under $5k", "count": 9, "pct": 0.4091}, {"label": "$5k–$20k", "count": 6, "pct": 0.2727}, {"label": "$20k–$50k", "count": 4, "pct": 0.1818}, {"label": "$50k-$100k", "count": 3, "pct": 0.1364}, {"label": "Over $100k", "count": 0, "pct": 0.0}, {"label": "We are not tracking this yet", "count": 0, "pct": 0.0}]}, {"pollId": 75722430, "question": "What does AI cost you per developer per month?", "type": "single", "totalVotes": 22, "avgRating": null, "options": [{"label": "Under $50/dev", "count": 9, "pct": 0.4091}, {"label": "$150–$500/dev", "count": 8, "pct": 0.3636}, {"label": "$50–$150/dev", "count": 5, "pct": 0.2273}, {"label": "Over $500/dev", "count": 0, "pct": 0.0}, {"label": "We have no idea", "count": 0, "pct": 0.0}]}, {"pollId": 75722431, "question": "What is eating most of your AI budget? (Pick 3)", "type": "multi", "totalVotes": 22, "avgRating": null, "options": [{"label": "Coding copilots (Cursor, Claude Code or Codex)", "count": 17, "pct": 0.7727}, {"label": "Inference and API calls to OpenAI, Anthropic, Gemini etc.", "count": 13, "pct": 0.5909}, {"label": "Agentic workflow tools like Claude Cowork, n8n or Zapier AI", "count": 6, "pct": 0.2727}, {"label": "Internal model hosting and GPU infrastructure", "count": 3, "pct": 0.1364}, {"label": "AI-native SaaS tools like Databricks, Figma, Granola, etc", "count": 2, "pct": 0.0909}, {"label": "Vibe coding tools (Replit, Emergent, Lovable, V0, etc)", "count": 1, "pct": 0.0455}, {"label": "Spread roughly across all of the above", "count": 0, "pct": 0.0}]}, {"pollId": 75722432, "question": "How do you govern AI spend across the team?", "type": "single", "totalVotes": 23, "avgRating": null, "options": [{"label": "Centralized budget, I control all of it", "count": 14, "pct": 0.6087}, {"label": "No formal governance in place yet", "count": 4, "pct": 0.1739}, {"label": "Developer/team member level budget with approval for extra usage", "count": 3, "pct": 0.1304}, {"label": "Team level budgets, each team decides", "count": 1, "pct": 0.0435}, {"label": "Allocated per project", "count": 1, "pct": 0.0435}]}, {"pollId": 75726210, "question": "How are you measuring the productivity impact of AI?", "type": "single", "totalVotes": 23, "avgRating": null, "options": [{"label": "Cycle time and PR velocity", "count": 10, "pct": 0.4348}, {"label": "Volume of code or features shipped", "count": 10, "pct": 0.4348}, {"label": "Business outcomes like revenue or support deflection", "count": 7, "pct": 0.3043}, {"label": "Engineers self-reporting productivity gains", "count": 6, "pct": 0.2609}, {"label": "We are not measuring it yet", "count": 5, "pct": 0.2174}]}, {"pollId": 75726211, "question": "How confident are you in the ROI from your AI spend?", "type": "rating", "totalVotes": 20, "avgRating": 3.7, "options": [{"label": "2", "count": 2, "pct": 0.1}, {"label": "3", "count": 7, "pct": 0.35}, {"label": "4", "count": 6, "pct": 0.3}, {"label": "5", "count": 5, "pct": 0.25}]}], "Agents in Production": [{"pollId": 75722582, "question": "Where are you on running agents in production?", "type": "single", "totalVotes": 26, "avgRating": null, "options": [{"label": "Agents are in production but with human oversight", "count": 12, "pct": 0.4615}, {"label": "Running agents fully unsupervised in production", "count": 9, "pct": 0.3462}, {"label": "Piloting or testing in staging environments", "count": 3, "pct": 0.1154}, {"label": "Still exploring, nothing shipped to production yet", "count": 2, "pct": 0.0769}]}, {"pollId": 75722583, "question": "What is your biggest reliability challenge with agents? (Pick up to 2)", "type": "multi", "totalVotes": 27, "avgRating": null, "options": [{"label": "Hallucinations /Edge cases and wrong outputs reaching users", "count": 15, "pct": 0.5556}, {"label": "Model behavior drifting over time", "count": 8, "pct": 0.2963}, {"label": "Inconsistent and non-deterministic behavior", "count": 8, "pct": 0.2963}, {"label": "Failures when orchestrating multiple agents", "count": 7, "pct": 0.2593}, {"label": "Unpredictable latency and cost spikes", "count": 6, "pct": 0.2222}]}, {"pollId": 75722584, "question": "How well can you observe what your AI systems are doing?", "type": "single", "totalVotes": 26, "avgRating": null, "options": [{"label": "Full visibility: logs, traces and evals in place", "count": 11, "pct": 0.4231}, {"label": "Partial monitoring but no evaluation framework yet", "count": 11, "pct": 0.4231}, {"label": "Basic logging only", "count": 3, "pct": 0.1154}, {"label": "We are largely flying blind", "count": 1, "pct": 0.0385}]}, {"pollId": 75722585, "question": "How are you handling security and compliance for agents? (Pick up to 2)", "type": "multi", "totalVotes": 26, "avgRating": null, "options": [{"label": "Not formally addressed yet", "count": 11, "pct": 0.4231}, {"label": "Controls on PII and sensitive data access", "count": 10, "pct": 0.3846}, {"label": "Audit trails for all agent actions", "count": 10, "pct": 0.3846}, {"label": "Protection against prompt injection attacks", "count": 5, "pct": 0.1923}, {"label": "Regulatory guardrails for RBI, IRDAI or similar", "count": 4, "pct": 0.1538}]}, {"pollId": 75726272, "question": "What did you have to change to make your codebase agent-ready?", "type": "single", "totalVotes": 25, "avgRating": null, "options": [{"label": "Built new tooling and API layers from scratch", "count": 9, "pct": 0.36}, {"label": "Minimal changes, it was already modular", "count": 8, "pct": 0.32}, {"label": "Still working on it", "count": 4, "pct": 0.16}, {"label": "Significant refactoring of legacy code", "count": 2, "pct": 0.08}, {"label": "Haven't started yet", "count": 2, "pct": 0.08}]}, {"pollId": 75726273, "question": "How do you balance agent autonomy with human oversight?", "type": "single", "totalVotes": 27, "avgRating": null, "options": [{"label": "Humans are in the loop at key decision points", "count": 19, "pct": 0.7037}, {"label": "Humans reviews after (sampling, error cases)", "count": 4, "pct": 0.1481}, {"label": "Still figuring out the right balance", "count": 4, "pct": 0.1481}, {"label": "Fully autonomous with no human checkpoints", "count": 0, "pct": 0.0}]}, {"pollId": 75726274, "question": "How production-ready is your agent infrastructure overall?", "type": "rating", "totalVotes": 22, "avgRating": 3.3, "options": [{"label": "1", "count": 2, "pct": 0.0909}, {"label": "2", "count": 3, "pct": 0.1364}, {"label": "3", "count": 7, "pct": 0.3182}, {"label": "4", "count": 6, "pct": 0.2727}, {"label": "5", "count": 4, "pct": 0.1818}]}], "Team & Org": [{"pollId": 75722649, "question": "Has AI changed how you structure your team or hire engineers?", "type": "single", "totalVotes": 29, "avgRating": null, "options": [{"label": "Yes, we have changed our hiring bar and criteria", "count": 10, "pct": 0.3448}, {"label": "Yes, we have meaningfully restructured the team", "count": 8, "pct": 0.2759}, {"label": "Small tweaks but nothing structural yet", "count": 8, "pct": 0.2759}, {"label": "We are planning to change but haven't yet", "count": 3, "pct": 0.1034}, {"label": "No change so far", "count": 0, "pct": 0.0}]}, {"pollId": 75722650, "question": "How has your engineering headcount trended as AI adoption grew?", "type": "single", "totalVotes": 29, "avgRating": null, "options": [{"label": "Flat, AI absorbed what would have been new hires", "count": 15, "pct": 0.5172}, {"label": "Growing, AI keeps creating more things to build", "count": 5, "pct": 0.1724}, {"label": "Shrinking, AI is replacing headcount we'd otherwise have", "count": 5, "pct": 0.1724}, {"label": "Too early to tell", "count": 4, "pct": 0.1379}]}, {"pollId": 75722651, "question": "What skills are you now hiring for that you were not before? (Pick up to 2)", "type": "multi", "totalVotes": 28, "avgRating": null, "options": [{"label": "Stronger product thinking in engineers", "count": 23, "pct": 0.8214}, {"label": "Prompt engineering and AI system design", "count": 13, "pct": 0.4643}, {"label": "Ability to evaluate and test AI outputs", "count": 8, "pct": 0.2857}, {"label": "The bar has not really changed", "count": 2, "pct": 0.0714}, {"label": "ML and model fine-tuning", "count": 0, "pct": 0.0}]}, {"pollId": 75748933, "question": "What has changed most in how you evaluate engineering candidates?(Pick upto 3)", "type": "multi", "totalVotes": 28, "avgRating": null, "options": [{"label": "More emphasis on system design and architecture thinking", "count": 22, "pct": 0.7857}, {"label": "Candidates are expected to code with AI tools, not without them", "count": 18, "pct": 0.6429}, {"label": "Evaluating how well they scope and break down problems for AI", "count": 10, "pct": 0.3571}, {"label": "We now test for agentic system design specifically", "count": 5, "pct": 0.1786}, {"label": "Honestly, our process has not changed much yet", "count": 5, "pct": 0.1786}, {"label": "Stronger focus on context engineering and prompt quality", "count": 3, "pct": 0.1071}, {"label": "Moving towards automated or AI-assisted interview stages", "count": 1, "pct": 0.0357}]}, {"pollId": 75722652, "question": "What is happening to junior engineer roles at your company?", "type": "single", "totalVotes": 26, "avgRating": null, "options": [{"label": "Hiring fewer juniors because AI fills that gap", "count": 9, "pct": 0.3462}, {"label": "Redefining what juniors do rather than cutting them", "count": 8, "pct": 0.3077}, {"label": "Actually hiring more juniors to leverage AI tools", "count": 6, "pct": 0.2308}, {"label": "No change to junior hiring so far", "count": 3, "pct": 0.1154}]}, {"pollId": 75722699, "question": "What is your biggest org challenge in the AI era? (Pick up to 2)", "type": "multi", "totalVotes": 28, "avgRating": null, "options": [{"label": "Maintaining code quality and long-term system ownership", "count": 16, "pct": 0.5714}, {"label": "Getting engineers to use AI tools effectively", "count": 12, "pct": 0.4286}, {"label": "Right-sizing the team as productivity per engineer grows", "count": 7, "pct": 0.25}, {"label": "Spreading AI adoption beyond the engineering team", "count": 7, "pct": 0.25}, {"label": "Preserving engineering culture as the way of working changes", "count": 7, "pct": 0.25}]}, {"pollId": 75722700, "question": "How are you driving AI adoption beyond engineering?", "type": "single", "totalVotes": 28, "avgRating": null, "options": [{"label": "Ad hoc, teams figure it out themselves", "count": 13, "pct": 0.4643}, {"label": "Structured enablement program in place", "count": 10, "pct": 0.3571}, {"label": "Non-engineering teams are already self-sufficient", "count": 4, "pct": 0.1429}, {"label": "Elevation's AI sessions and support", "count": 1, "pct": 0.0357}, {"label": "Brought in outside consultants to help", "count": 0, "pct": 0.0}]}, {"pollId": 75749035, "question": "How have your core engineering rituals changed with AI in the mix?(Pick up to 3)", "type": "multi", "totalVotes": 28, "avgRating": null, "options": [{"label": "Documentation is now mostly AI generated", "count": 16, "pct": 0.5714}, {"label": "Code review takes longer now because AI generates more to review", "count": 13, "pct": 0.4643}, {"label": "Sprint planning has changed, we scope differently when AI accelerates execution", "count": 12, "pct": 0.4286}, {"label": "Code review is faster because AI pre-reviews before humans see it", "count": 9, "pct": 0.3214}, {"label": "Standups feel less relevant, work moves faster than daily check-ins", "count": 5, "pct": 0.1786}, {"label": "Rituals have not changed much, just the output volume has", "count": 5, "pct": 0.1786}]}, {"pollId": 75722701, "question": "How AI-native is your engineering org today?", "type": "rating", "totalVotes": 26, "avgRating": 3.7, "options": [{"label": "3", "count": 13, "pct": 0.5}, {"label": "4", "count": 9, "pct": 0.3462}, {"label": "5", "count": 4, "pct": 0.1538}]}]};
+const SEG_META = {"Costs & AI": {"accent": "#0047C4", "soft": "#E1EBFB", "icon": "◆"}, "Agents in Production": {"accent": "#002F6C", "soft": "#DCE6F5", "icon": "●"}, "Team & Org": {"accent": "#2F7BE4", "soft": "#E3EEFC", "icon": "▲"}};
+const tagText = { single: 'Single choice', multi: 'Multi-select', rating: 'Rating 1–5' };
+function pctStr(p){ return (p*100).toFixed(0)+'%'; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function tint(hex, t){
+  const c = parseInt(hex.slice(1),16);
+  let r=(c>>16)&255, g=(c>>8)&255, b=c&255;
+  r=Math.round(r+(255-r)*t); g=Math.round(g+(255-g)*t); b=Math.round(b+(255-b)*t);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+function polar(cx,cy,r,deg){ const a=(deg-90)*Math.PI/180; return {x:cx+r*Math.cos(a), y:cy+r*Math.sin(a)}; }
+function arcPath(cx,cy,r,a0,a1){
+  const s=polar(cx,cy,r,a1), e=polar(cx,cy,r,a0);
+  const large = (a1-a0)<=180 ? 0 : 1;
+  return ['M',cx,cy,'L',e.x,e.y,'A',r,r,0,large,1,s.x,s.y,'Z'].join(' ');
+}
+
+function renderBars(q, accent){
+  const maxPct = Math.max(...q.options.map(o=>o.pct), 0.0001);
+  return '<div class="bars">' + q.options.map((o,i)=>{
+    const w = (o.pct/maxPct)*100;
+    const isTop = i===0 && o.count>0;
+    const color = isTop ? accent : accent+'70';
+    return '<div class="bar-row '+(isTop?'top':'')+'">'
+      + '<div class="bar-label"><span class="txt">'+esc(o.label)+'</span>'
+      + '<span class="val">'+pctStr(o.pct)+' · '+o.count+'</span></div>'
+      + '<div class="track"><div class="fill" data-w="'+w+'" style="background:'+color+'"></div></div></div>';
+  }).join('') + '</div>';
+}
+
+function renderPie(q, accent){
+  const cx=84, cy=84, r=82;
+  const total = q.options.reduce((s,o)=>s+o.count,0) || 1;
+  const n = q.options.length;
+  let ang = 0, paths = '';
+  q.options.forEach((o,i)=>{
+    const color = o.count===0 ? '#DDE4EE' : tint(accent, n<=1?0:(i/(n-1))*0.62);
+    o._color = color;
+    if(o.count>0){
+      const frac = o.count/total, sweep = frac*360;
+      if(frac >= 0.999){
+        paths += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+color+'"/>';
+      } else {
+        paths += '<path d="'+arcPath(cx,cy,r,ang,ang+sweep)+'" fill="'+color+'" stroke="#FFFFFF" stroke-width="2"/>';
+        ang += sweep;
+      }
+    }
+  });
+  const legend = q.options.map((o,i)=>{
+    const isTop = i===0 && o.count>0;
+    return '<div class="legend-row '+(isTop?'top':'')+'">'
+      + '<span class="sw" style="background:'+o._color+'"></span>'
+      + '<span class="txt">'+esc(o.label)+'</span>'
+      + '<span class="val">'+pctStr(o.pct)+' · '+o.count+'</span></div>';
+  }).join('');
+  return '<div class="pie-card"><div class="pie-wrap">'
+    + '<svg class="pie-svg" viewBox="0 0 168 168">'+paths+'</svg></div>'
+    + '<div class="pie-legend">'+legend+'</div></div>';
+}
+
+function renderRating(q, accent){
+  const rr = Math.round(q.avgRating);
+  const dots = '●'.repeat(rr) + '○'.repeat(5-rr);
+  const maxC = Math.max(...q.options.map(o=>o.count), 1);
+  const byLvl = {}; q.options.forEach(o=>byLvl[o.label]=o);
+  let dist = '';
+  for(let l=5;l>=1;l--){
+    const o = byLvl[String(l)] || {count:0,pct:0};
+    const w = (o.count/maxC)*100;
+    dist += '<div class="rdist-row"><span class="lvl">'+l+'</span>'
+      + '<div class="track"><div class="fill" data-w="'+w+'" style="background:'+accent+'"></div></div>'
+      + '<span class="val">'+o.count+'</span></div>';
+  }
+  return '<div class="rating-card"><div class="rating-score">'
+    + '<div class="rating-num" style="color:'+accent+'">'+q.avgRating.toFixed(1)+'</div>'
+    + '<div class="rating-outof">avg · out of 5</div>'
+    + '<div class="rating-dots" style="color:'+accent+'">'+dots+'</div></div>'
+    + '<div class="rdist">'+dist+'</div></div>';
+}
+
+function card(q, accent){
+  let body;
+  if(q.type==='rating') body = renderRating(q, accent);
+  else if(q.type==='single') body = renderPie(q, accent);
+  else body = renderBars(q, accent);
+  return '<div class="card"><div class="q-head"><div class="q-title">'+esc(q.question)+'</div>'
+    + '<div class="q-meta">'+q.totalVotes+' votes</div></div>'
+    + '<span class="q-tag tag-'+q.type+'">'+tagText[q.type]+'</span>'+body+'</div>';
+}
+
+const tabsEl = document.getElementById('tabs');
+const panelsEl = document.getElementById('panels');
+const segs = Object.keys(DATA);
+segs.forEach((seg, idx)=>{
+  const m = SEG_META[seg];
+  const btn = document.createElement('button');
+  btn.className = 'tab' + (idx===0?' active':'');
+  btn.style.setProperty('--tab-accent', m.accent);
+  btn.innerHTML = '<span class="dot" style="color:'+m.accent+'">'+m.icon+'</span>'+seg;
+  btn.onclick = ()=>activate(idx);
+  tabsEl.appendChild(btn);
+  const panel = document.createElement('div');
+  panel.className = 'panel' + (idx===0?' active':'');
+  panel.innerHTML = DATA[seg].map(q=>card(q, m.accent)).join('');
+  panelsEl.appendChild(panel);
+});
+
+function animate(panel){
+  if(!panel) return;
+  panel.querySelectorAll('.fill').forEach(f=>{
+    requestAnimationFrame(()=>{ f.style.width = f.dataset.w + '%'; });
+  });
+}
+function activate(idx){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active', i===idx));
+  document.querySelectorAll('.panel').forEach((p,i)=>{
+    const on = i===idx; p.classList.toggle('active', on);
+    if(on){ p.querySelectorAll('.fill').forEach(f=>f.style.width='0'); animate(p); }
+  });
+}
+animate(document.querySelector('.panel.active'));
+</script>
+</body>
+</html>
