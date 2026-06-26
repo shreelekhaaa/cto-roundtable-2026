@@ -361,8 +361,7 @@ function card(q, accent){
   else body = renderDiverging(q, accent);
   const ins = INSIGHTS[q.pollId] ? '<div class="insight">'+INSIGHTS[q.pollId]+'</div>' : '';
   return '<div class="card" style="--card-accent:'+accent+';--insight-bg:'+tint(accent,0.93)+'">'
-    + '<div class="q-head"><div class="q-title">'+esc(q.question)+'</div>'
-    + '<div class="q-meta">'+q.totalVotes+' votes</div></div>'
+    + '<div class="q-head"><div class="q-title">'+esc(q.question)+'</div></div>'
     + '<span class="q-tag tag-'+q.type+'">'+tagText[q.type]+'</span>'+body+ins+'</div>';
 }
 
