@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTO Roundtable 2026 — Team &amp; Org</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F8FD; --card: #FFFFFF; --ink: #14223D; --ink-soft: #5A6B85;
+    --ink-faint: #97A3B8; --line: #E4EAF3; --track: #EAF0F8;
+    --brand: #0047C4; --navy: #002F6C;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg);
+    color: var(--ink); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 40px 24px 56px; }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--brand); margin-bottom: 10px; }
+  h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 10px; color: var(--navy); }
+  .sub { font-size: 15px; color: var(--ink-soft); max-width: 580px; }
+
+  /* ---- deck / carousel ---- */
+  /* --ar sets the uniform slide aspect ratio (width / height). Change it here. */
+  .deck { --ar: 3 / 2; position: relative; overflow: hidden; touch-action: pan-y;
+    aspect-ratio: var(--ar); }
+  .track { display: flex; height: 100%; transition: transform .5s cubic-bezier(.22,.61,.36,1); }
+  .slide { flex: 0 0 100%; max-width: 100%; height: 100%; padding: 10px 8px;
+    display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
+  .slide .card { margin-bottom: 0; width: 100%; }
+  /* question slides: card fills the frame, its content vertically centred */
+  .q-slide .card { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; }
+  @media (max-width: 560px) { .deck { --ar: 3 / 4; } }
+
+  /* slide title (intro) */
+  .slide-title { padding-top: 6px; }
+
+  /* controls */
+  .controls { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 26px; }
+  .navbtn { appearance: none; border: 1px solid var(--line); background: var(--card); cursor: pointer;
+    width: 40px; height: 40px; border-radius: 11px; color: var(--ink-soft); font-size: 17px;
+    display: grid; place-items: center; transition: all .18s ease; flex: none; }
+  .navbtn:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); transform: translateY(-1px);
+    box-shadow: 0 6px 16px -10px rgba(0,71,196,.5); }
+  .navbtn:disabled { opacity: .35; cursor: default; }
+  .dots { display: flex; gap: 8px; align-items: center; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); border: none; padding: 0;
+    cursor: pointer; transition: all .25s cubic-bezier(.22,.61,.36,1); }
+  .dot:hover { background: var(--ink-faint); }
+  .dot.on { background: var(--brand); width: 22px; border-radius: 5px; }
+  .counter { font-size: 12.5px; color: var(--ink-faint); font-variant-numeric: tabular-nums;
+    font-weight: 600; min-width: 42px; text-align: center; }
+  .hint { text-align: center; font-size: 11.5px; color: var(--ink-faint); margin-top: 12px; }
+  .hint kbd { font-family: inherit; font-size: 11px; background: var(--track); border: 1px solid var(--line);
+    border-radius: 5px; padding: 1px 6px; color: var(--ink-soft); }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px 26px; }
+  .q-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 6px; }
+  .q-title { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+  .q-meta { font-size: 12px; color: var(--ink-faint); white-space: nowrap; padding-top: 3px; }
+  .q-tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.03em;
+    padding: 3px 9px; border-radius: 20px; margin-bottom: 16px; }
+  .tag-single { background: var(--track); color: var(--ink-soft); }
+  .tag-multi  { background: #E1EBFB; color: #0A47BD; }
+  .tag-rating { background: #E0E9F6; color: #002F6C; }
+  /* horizontal bars (multi-select) */
+  .bars { display: flex; flex-direction: column; gap: 13px; margin-top: 4px; }
+  .bar-row { display: grid; grid-template-columns: 1fr; gap: 5px; }
+  .bar-label { display: flex; justify-content: space-between; gap: 14px; font-size: 13.5px; }
+  .bar-label .txt { color: var(--ink); }
+  .bar-label .val { color: var(--ink-soft); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .track-bar { height: 9px; background: var(--track); border-radius: 6px; overflow: hidden; }
+  .fill { height: 100%; border-radius: 6px; width: 0; transition: width .7s cubic-bezier(.22,.61,.36,1); }
+  .bar-row.top .txt { font-weight: 600; }
+  /* rating */
+  footer { margin-top: 36px; font-size: 12px; color: var(--ink-faint); text-align: center; }
+  @media (max-width: 560px) {
+    h1 { font-size: 25px; }
+  }
+  /* ---- section intro ---- */
+  .lede { font-size: 15px; color: var(--ink-soft); max-width: 620px; margin: 4px 0 22px; }
+  .stat-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px;
+    transition: transform .22s cubic-bezier(.22,.61,.36,1), box-shadow .22s ease; }
+  .stat:hover { transform: translateY(-2px); box-shadow: 0 8px 22px -14px rgba(20,34,61,.22); }
+  .stat .n { font-size: 27px; font-weight: 700; letter-spacing: -0.02em; color: var(--navy); font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: 12.5px; color: var(--ink-soft); margin-top: 7px; line-height: 1.4; }
+  @media (max-width: 760px) { .stat-strip { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 430px) { .stat-strip { grid-template-columns: 1fr; } }
+  /* ---- card hover ---- */
+  .card { transition: transform .22s cubic-bezier(.22,.61,.36,1), box-shadow .22s ease, border-color .22s ease; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -16px rgba(20,34,61,.20);
+    border-color: color-mix(in srgb, var(--card-accent, #0047C4) 32%, var(--line)); }
+  /* ---- insight callout ---- */
+  .insight { margin-top: 18px; padding: 13px 16px; background: var(--insight-bg, #F3F7FE);
+    border-left: 3px solid var(--card-accent, var(--brand)); border-radius: 0 9px 9px 0;
+    font-size: 13.5px; color: var(--ink-soft); line-height: 1.55; }
+  .insight .k { font-weight: 600; color: var(--ink); }
+  /* ---- cross-highlight ---- */
+  [data-idx] { transition: opacity .16s ease; }
+  .chart.hl-on [data-idx].dim { opacity: .3; }
+  .bar-row.hl .txt, .legend-row.hl .txt, .distbar-li.hl { color: var(--ink); font-weight: 600; }
+  .bar-row.hl .fill { filter: saturate(1.12) brightness(1.05); }
+  .dc-n { font-size: 21px; font-weight: 700; }
+  .dc-l { font-size: 8.5px; fill: var(--ink-faint); text-transform: uppercase; letter-spacing: .1em; }
+  /* ---- distribution bar ---- */
+  .distbar-track { display: flex; height: 34px; border-radius: 9px; overflow: hidden; background: var(--track); }
+  .distbar-seg { flex-grow: 0; flex-shrink: 0; flex-basis: 0%; height: 100%; cursor: pointer;
+    transition: flex-basis .75s cubic-bezier(.22,.61,.36,1), opacity .16s ease; }
+  .distbar-seg + .distbar-seg { box-shadow: -1px 0 0 #fff; }
+  .distbar-legend { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-top: 15px; }
+  .distbar-li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-soft); }
+  .distbar-li .sw { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .distbar-li .v { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .bar-row, .legend-row { cursor: default; }
+  /* ---- lollipop ---- */
+  .lolli { display: flex; flex-direction: column; gap: 15px; margin-top: 4px; }
+  .lrow { display: flex; flex-direction: column; gap: 7px; }
+  .lhead { display: flex; justify-content: space-between; gap: 14px; font-size: 13.5px; }
+  .lhead .lt { color: var(--ink); }
+  .lhead .lt.top { font-weight: 600; }
+  .lhead .lv { color: var(--ink-soft); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ltrack { position: relative; height: 11px; display: flex; align-items: center; }
+  .lstem { height: 3px; width: 0; border-radius: 2px; transition: width .7s cubic-bezier(.22,.61,.36,1); }
+  .ldot { position: absolute; top: 50%; left: 0; width: 11px; height: 11px; border-radius: 50%; transform: translate(-50%,-50%); transition: left .7s cubic-bezier(.22,.61,.36,1); }
+  .lrow.hl .lt { color: var(--ink); font-weight: 600; }
+  /* ---- diverging tick ---- */
+  .div-track { position: relative; overflow: visible; }
+  .div-tick { position: absolute; left: 50%; top: -4px; bottom: -4px; width: 2px; background: var(--ink-faint); transform: translateX(-50%); opacity: .45; }
+  /* ---- bubbles sizing ---- */
+  .bubbles svg { display: block; width: 100%; max-width: 480px; margin: 0 auto; }
+  /* ---- waffle ---- */
+  .waffle { display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; padding: 8px 0; }
+  .wgrid { display: grid; grid-template-columns: repeat(10, 22px); grid-auto-rows: 22px; gap: 6px; flex: none; }
+  .wdot { width: 22px; height: 22px; border-radius: 5px; }
+  .wlegend { flex: 0 1 250px; min-width: 200px; display: flex; flex-direction: column; gap: 11px; }
+  /* ---- histogram (ratings) ---- */
+  .histo { display: flex; align-items: flex-end; gap: 30px; flex-wrap: wrap; }
+  .hscore { flex: none; }
+  .hnum { font-size: 42px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .hsub { font-size: 12px; color: var(--ink-faint); margin-top: 5px; }
+  .hwrap { position: relative; flex: 1; min-width: 230px; }
+  .hcols { display: flex; align-items: flex-end; gap: 14px; height: 130px; }
+  .hcol { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; }
+  .hc-n { font-size: 12px; color: var(--ink-soft); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .hbar { width: 100%; max-width: 36px; border-radius: 5px 5px 0 0; height: 0; transition: height .7s cubic-bezier(.22,.61,.36,1); }
+  .hc-l { font-size: 12px; color: var(--ink-faint); }
+  .havg { position: absolute; top: 0; bottom: 24px; width: 0; border-left: 2px dashed var(--ink-faint); }
+  .havg span { position: absolute; top: -4px; left: 6px; font-size: 10.5px; color: var(--ink-soft); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="deck" id="deck" tabindex="0" aria-roledescription="carousel">
+    <div class="track" id="track"></div>
+  </div>
+  <div class="controls">
+    <button class="navbtn prev" id="prev" aria-label="Previous slide">&#8592;</button>
+    <div class="dots" id="dots"></div>
+    <button class="navbtn next" id="next" aria-label="Next slide">&#8594;</button>
+    <div class="counter" id="counter">1 / 1</div>
+  </div>
+  <div class="hint">Use <kbd>&larr;</kbd> <kbd>&rarr;</kbd>, swipe, or the dots to move between slides. Hover any bar to highlight it.</div>
+  <footer>Poll responses &middot; CTO Roundtable 2026 &middot; 22&ndash;29 respondents per question</footer>
+</div>
+<script>
+// ===== which segment this file renders =====
+const SEGMENT = "Team & Org";
+
+const DATA = {"Costs & AI": [{"pollId": 75722429, "question": "What is your total monthly AI spend? (Include everything)", "type": "single", "totalVotes": 22, "avgRating": null, "options": [{"label": "Under $5k", "count": 9, "pct": 0.4091}, {"label": "$5k–$20k", "count": 6, "pct": 0.2727}, {"label": "$20k–$50k", "count": 4, "pct": 0.1818}, {"label": "$50k-$100k", "count": 3, "pct": 0.1364}, {"label": "Over $100k", "count": 0, "pct": 0.0}, {"label": "We are not tracking this yet", "count": 0, "pct": 0.0}]}, {"pollId": 75722430, "question": "What does AI cost you per developer per month?", "type": "single", "totalVotes": 22, "avgRating": null, "options": [{"label": "Under $50/dev", "count": 9, "pct": 0.4091}, {"label": "$150–$500/dev", "count": 8, "pct": 0.3636}, {"label": "$50–$150/dev", "count": 5, "pct": 0.2273}, {"label": "Over $500/dev", "count": 0, "pct": 0.0}, {"label": "We have no idea", "count": 0, "pct": 0.0}]}, {"pollId": 75722431, "question": "What is eating most of your AI budget? (Pick 3)", "type": "multi", "totalVotes": 22, "avgRating": null, "options": [{"label": "Coding copilots (Cursor, Claude Code or Codex)", "count": 17, "pct": 0.7727}, {"label": "Inference and API calls to OpenAI, Anthropic, Gemini etc.", "count": 13, "pct": 0.5909}, {"label": "Agentic workflow tools like Claude Cowork, n8n or Zapier AI", "count": 6, "pct": 0.2727}, {"label": "Internal model hosting and GPU infrastructure", "count": 3, "pct": 0.1364}, {"label": "AI-native SaaS tools like Databricks, Figma, Granola, etc", "count": 2, "pct": 0.0909}, {"label": "Vibe coding tools (Replit, Emergent, Lovable, V0, etc)", "count": 1, "pct": 0.0455}, {"label": "Spread roughly across all of the above", "count": 0, "pct": 0.0}]}, {"pollId": 75722432, "question": "How do you govern AI spend across the team?", "type": "single", "totalVotes": 23, "avgRating": null, "options": [{"label": "Centralized budget, I control all of it", "count": 14, "pct": 0.6087}, {"label": "No formal governance in place yet", "count": 4, "pct": 0.1739}, {"label": "Developer/team member level budget with approval for extra usage", "count": 3, "pct": 0.1304}, {"label": "Team level budgets, each team decides", "count": 1, "pct": 0.0435}, {"label": "Allocated per project", "count": 1, "pct": 0.0435}]}, {"pollId": 75726210, "question": "How are you measuring the productivity impact of AI?", "type": "single", "totalVotes": 23, "avgRating": null, "options": [{"label": "Cycle time and PR velocity", "count": 10, "pct": 0.4348}, {"label": "Volume of code or features shipped", "count": 10, "pct": 0.4348}, {"label": "Business outcomes like revenue or support deflection", "count": 7, "pct": 0.3043}, {"label": "Engineers self-reporting productivity gains", "count": 6, "pct": 0.2609}, {"label": "We are not measuring it yet", "count": 5, "pct": 0.2174}]}, {"pollId": 75726211, "question": "How confident are you in the ROI from your AI spend?", "type": "rating", "totalVotes": 20, "avgRating": 3.7, "options": [{"label": "2", "count": 2, "pct": 0.1}, {"label": "3", "count": 7, "pct": 0.35}, {"label": "4", "count": 6, "pct": 0.3}, {"label": "5", "count": 5, "pct": 0.25}]}], "Agents in Production": [{"pollId": 75722582, "question": "Where are you on running agents in production?", "type": "single", "totalVotes": 26, "avgRating": null, "options": [{"label": "Agents are in production but with human oversight", "count": 12, "pct": 0.4615}, {"label": "Running agents fully unsupervised in production", "count": 9, "pct": 0.3462}, {"label": "Piloting or testing in staging environments", "count": 3, "pct": 0.1154}, {"label": "Still exploring, nothing shipped to production yet", "count": 2, "pct": 0.0769}]}, {"pollId": 75722583, "question": "What is your biggest reliability challenge with agents? (Pick up to 2)", "type": "multi", "totalVotes": 27, "avgRating": null, "options": [{"label": "Hallucinations /Edge cases and wrong outputs reaching users", "count": 15, "pct": 0.5556}, {"label": "Model behavior drifting over time", "count": 8, "pct": 0.2963}, {"label": "Inconsistent and non-deterministic behavior", "count": 8, "pct": 0.2963}, {"label": "Failures when orchestrating multiple agents", "count": 7, "pct": 0.2593}, {"label": "Unpredictable latency and cost spikes", "count": 6, "pct": 0.2222}]}, {"pollId": 75722584, "question": "How well can you observe what your AI systems are doing?", "type": "single", "totalVotes": 26, "avgRating": null, "options": [{"label": "Full visibility: logs, traces and evals in place", "count": 11, "pct": 0.4231}, {"label": "Partial monitoring but no evaluation framework yet", "count": 11, "pct": 0.4231}, {"label": "Basic logging only", "count": 3, "pct": 0.1154}, {"label": "We are largely flying blind", "count": 1, "pct": 0.0385}]}, {"pollId": 75722585, "question": "How are you handling security and compliance for agents? (Pick up to 2)", "type": "multi", "totalVotes": 26, "avgRating": null, "options": [{"label": "Not formally addressed yet", "count": 11, "pct": 0.4231}, {"label": "Controls on PII and sensitive data access", "count": 10, "pct": 0.3846}, {"label": "Audit trails for all agent actions", "count": 10, "pct": 0.3846}, {"label": "Protection against prompt injection attacks", "count": 5, "pct": 0.1923}, {"label": "Regulatory guardrails for RBI, IRDAI or similar", "count": 4, "pct": 0.1538}]}, {"pollId": 75726272, "question": "What did you have to change to make your codebase agent-ready?", "type": "single", "totalVotes": 25, "avgRating": null, "options": [{"label": "Built new tooling and API layers from scratch", "count": 9, "pct": 0.36}, {"label": "Minimal changes, it was already modular", "count": 8, "pct": 0.32}, {"label": "Still working on it", "count": 4, "pct": 0.16}, {"label": "Significant refactoring of legacy code", "count": 2, "pct": 0.08}, {"label": "Haven't started yet", "count": 2, "pct": 0.08}]}, {"pollId": 75726273, "question": "How do you balance agent autonomy with human oversight?", "type": "single", "totalVotes": 27, "avgRating": null, "options": [{"label": "Humans are in the loop at key decision points", "count": 19, "pct": 0.7037}, {"label": "Humans reviews after (sampling, error cases)", "count": 4, "pct": 0.1481}, {"label": "Still figuring out the right balance", "count": 4, "pct": 0.1481}, {"label": "Fully autonomous with no human checkpoints", "count": 0, "pct": 0.0}]}, {"pollId": 75726274, "question": "How production-ready is your agent infrastructure overall?", "type": "rating", "totalVotes": 22, "avgRating": 3.3, "options": [{"label": "1", "count": 2, "pct": 0.0909}, {"label": "2", "count": 3, "pct": 0.1364}, {"label": "3", "count": 7, "pct": 0.3182}, {"label": "4", "count": 6, "pct": 0.2727}, {"label": "5", "count": 4, "pct": 0.1818}]}], "Team & Org": [{"pollId": 75722649, "question": "Has AI changed how you structure your team or hire engineers?", "type": "single", "totalVotes": 29, "avgRating": null, "options": [{"label": "Yes, we have changed our hiring bar and criteria", "count": 10, "pct": 0.3448}, {"label": "Yes, we have meaningfully restructured the team", "count": 8, "pct": 0.2759}, {"label": "Small tweaks but nothing structural yet", "count": 8, "pct": 0.2759}, {"label": "We are planning to change but haven't yet", "count": 3, "pct": 0.1034}, {"label": "No change so far", "count": 0, "pct": 0.0}]}, {"pollId": 75722650, "question": "How has your engineering headcount trended as AI adoption grew?", "type": "single", "totalVotes": 29, "avgRating": null, "options": [{"label": "Flat, AI absorbed what would have been new hires", "count": 15, "pct": 0.5172}, {"label": "Growing, AI keeps creating more things to build", "count": 5, "pct": 0.1724}, {"label": "Shrinking, AI is replacing headcount we'd otherwise have", "count": 5, "pct": 0.1724}, {"label": "Too early to tell", "count": 4, "pct": 0.1379}]}, {"pollId": 75722651, "question": "What skills are you now hiring for that you were not before? (Pick up to 2)", "type": "multi", "totalVotes": 28, "avgRating": null, "options": [{"label": "Stronger product thinking in engineers", "count": 23, "pct": 0.8214}, {"label": "Prompt engineering and AI system design", "count": 13, "pct": 0.4643}, {"label": "Ability to evaluate and test AI outputs", "count": 8, "pct": 0.2857}, {"label": "The bar has not really changed", "count": 2, "pct": 0.0714}, {"label": "ML and model fine-tuning", "count": 0, "pct": 0.0}]}, {"pollId": 75748933, "question": "What has changed most in how you evaluate engineering candidates?(Pick upto 3)", "type": "multi", "totalVotes": 28, "avgRating": null, "options": [{"label": "More emphasis on system design and architecture thinking", "count": 22, "pct": 0.7857}, {"label": "Candidates are expected to code with AI tools, not without them", "count": 18, "pct": 0.6429}, {"label": "Evaluating how well they scope and break down problems for AI", "count": 10, "pct": 0.3571}, {"label": "We now test for agentic system design specifically", "count": 5, "pct": 0.1786}, {"label": "Honestly, our process has not changed much yet", "count": 5, "pct": 0.1786}, {"label": "Stronger focus on context engineering and prompt quality", "count": 3, "pct": 0.1071}, {"label": "Moving towards automated or AI-assisted interview stages", "count": 1, "pct": 0.0357}]}, {"pollId": 75722652, "question": "What is happening to junior engineer roles at your company?", "type": "single", "totalVotes": 26, "avgRating": null, "options": [{"label": "Hiring fewer juniors because AI fills that gap", "count": 9, "pct": 0.3462}, {"label": "Redefining what juniors do rather than cutting them", "count": 8, "pct": 0.3077}, {"label": "Actually hiring more juniors to leverage AI tools", "count": 6, "pct": 0.2308}, {"label": "No change to junior hiring so far", "count": 3, "pct": 0.1154}]}, {"pollId": 75722699, "question": "What is your biggest org challenge in the AI era? (Pick up to 2)", "type": "multi", "totalVotes": 28, "avgRating": null, "options": [{"label": "Maintaining code quality and long-term system ownership", "count": 16, "pct": 0.5714}, {"label": "Getting engineers to use AI tools effectively", "count": 12, "pct": 0.4286}, {"label": "Right-sizing the team as productivity per engineer grows", "count": 7, "pct": 0.25}, {"label": "Spreading AI adoption beyond the engineering team", "count": 7, "pct": 0.25}, {"label": "Preserving engineering culture as the way of working changes", "count": 7, "pct": 0.25}]}, {"pollId": 75722700, "question": "How are you driving AI adoption beyond engineering?", "type": "single", "totalVotes": 28, "avgRating": null, "options": [{"label": "Ad hoc, teams figure it out themselves", "count": 13, "pct": 0.4643}, {"label": "Structured enablement program in place", "count": 10, "pct": 0.3571}, {"label": "Non-engineering teams are already self-sufficient", "count": 4, "pct": 0.1429}, {"label": "Elevation's AI sessions and support", "count": 1, "pct": 0.0357}, {"label": "Brought in outside consultants to help", "count": 0, "pct": 0.0}]}, {"pollId": 75749035, "question": "How have your core engineering rituals changed with AI in the mix?(Pick up to 3)", "type": "multi", "totalVotes": 28, "avgRating": null, "options": [{"label": "Documentation is now mostly AI generated", "count": 16, "pct": 0.5714}, {"label": "Code review takes longer now because AI generates more to review", "count": 13, "pct": 0.4643}, {"label": "Sprint planning has changed, we scope differently when AI accelerates execution", "count": 12, "pct": 0.4286}, {"label": "Code review is faster because AI pre-reviews before humans see it", "count": 9, "pct": 0.3214}, {"label": "Standups feel less relevant, work moves faster than daily check-ins", "count": 5, "pct": 0.1786}, {"label": "Rituals have not changed much, just the output volume has", "count": 5, "pct": 0.1786}]}, {"pollId": 75722701, "question": "How AI-native is your engineering org today?", "type": "rating", "totalVotes": 26, "avgRating": 3.7, "options": [{"label": "3", "count": 13, "pct": 0.5}, {"label": "4", "count": 9, "pct": 0.3462}, {"label": "5", "count": 4, "pct": 0.1538}]}]};
+const SEG_META = {"Costs & AI": {"accent": "#0047C4", "soft": "#E1EBFB", "icon": "◆"}, "Agents in Production": {"accent": "#002F6C", "soft": "#DCE6F5", "icon": "●"}, "Team & Org": {"accent": "#2F7BE4", "soft": "#E3EEFC", "icon": "▲"}};
+const tagText = { single: 'Single choice', multi: 'Multi-select', rating: 'Rating 1–5' };
+
+const INSIGHTS = {
+ 75722429: '<span class="k">The ceiling is the tell.</span> No team has crossed $100K a month, which means cost is still a choice rather than a constraint. The teams at the low end are not under-investing; they have structured their context well enough that scale has not forced their hand.',
+ 75722430: '<span class="k">Same tool, triple the cost.</span> A 3x spread inside one room of similar companies says a developer-month is priced by engineering habits, not vendor rates. Spending more is usually a sign of weaker context discipline, not heavier use.',
+ 75722431: '<span class="k">Building, not running.</span> Budgets tilted to copilots over inference show where these teams actually are: paying to build faster, not yet to serve AI at scale. The production bill arrives later.',
+ 75722432: '<span class="k">The spend is lumpy.</span> Centralizing the budget is a response to a hard lesson: one power user or a single runaway workflow can outspend the rest of the team combined. Seeing where cost concentrates matters more than capping everyone equally.',
+ 75726210: '<span class="k">The metrics flatter the tool.</span> Velocity and volume are exactly what AI inflates, so most measurement confirms what teams hope to see. The few who track a pod against a business outcome are the ones who will actually know.',
+ 75726211: '<span class="k">Faith ahead of proof.</span> A 3.7 is what conviction looks like before the evidence lands. Teams are spending on the belief that AI pays back, and whoever closes the gap to real attribution first sets the benchmark the rest borrow.',
+
+ 75722649: '<span class="k">Change is universal.</span> A third moved the hiring bar, another quarter restructured outright, and not one CTO reported no change at all. Only the depth varies.',
+ 75722650: '<span class="k">Flat, not collapsing.</span> 52% say AI absorbed the hires they would otherwise have made, while shrinking and growing teams come in tied at 17% each.',
+ 75722651: '<span class="k">Judgment over models.</span> Product thinking towers at 82%, with system design close behind, while ML and fine-tuning drew zero votes. The scarce skill is framing problems for AI.',
+ 75748933: '<span class="k">Testing thinking, not recall.</span> System design leads, and 64% now expect candidates to code with AI rather than without it. The interview measures how someone scopes a problem.',
+ 75722652: '<span class="k">The most divided question.</span> A third are hiring fewer juniors, a third are redefining the role, and nearly a quarter are hiring more to put AI in junior hands. There is no clear direction.',
+ 75722699: '<span class="k">Quality and ownership.</span> Maintaining code quality and long-term ownership tops the list at 57%. When more code ships faster from more hands, the real question is who owns it in two years.',
+ 75722700: '<span class="k">Mostly unmanaged.</span> Nearly half let non-engineering teams figure AI out on their own, and only a third run a structured program. The spread beyond engineering is still accidental.',
+ 75749035: '<span class="k">Bending under volume.</span> Documentation is now mostly AI-generated for 57%, and code review is splitting: 46% say it takes longer, 32% say AI pre-review made it faster.',
+ 75722701: '<span class="k">Confident, with room to run.</span> Self-assessed AI-nativeness lands at 3.7, with the room clustered at 3 and 4 and nobody rating below 3.',
+
+ 75722582: '<span class="k">Already shipped.</span> Eight in ten run agents in production, split between human oversight (46%) and unsupervised (35%). Only a handful are still in staging or exploring.',
+ 75722583: '<span class="k">Correctness is the ceiling.</span> 56% name hallucinations and wrong outputs reaching users as their top fear, well ahead of drift, latency, or orchestration failures.',
+ 75722584: '<span class="k">Half are flying half-blind.</span> 42% have full visibility with evals in place, but another 42% have only partial monitoring and no evaluation framework.',
+ 75722585: '<span class="k">The soft underbelly.</span> "Not formally addressed yet" is the most common answer at 42%, with PII controls and audit trails just behind. Controls lag adoption.',
+ 75726272: '<span class="k">Two roads in.</span> A third built new tooling and API layers from scratch, a third needed minimal change because they were already modular, and the rest are mid-refactor or have not started.',
+ 75726273: '<span class="k">Humans stay in the loop.</span> 70% keep a human at key decision points and zero run fully autonomous. "Unsupervised" means no real-time babysitting, while oversight stays at the decisions.',
+ 75726274: '<span class="k">The lowest score in the survey.</span> Production-readiness self-rates 3.3 out of 5. The people closest to agents are the most candid about how early it still is.'
+};
+
+const VIZ = {
+ 75722429:'diverging', 75722430:'waffle', 75722431:'lollipop', 75722432:'bubbles', 75726210:'bars', 75726211:'histogram',
+ 75722582:'waffle', 75722583:'lollipop', 75722584:'diverging', 75722585:'bubbles', 75726272:'bars', 75726273:'diverging', 75726274:'histogram',
+ 75722649:'bubbles', 75722650:'diverging', 75722651:'lollipop', 75748933:'bars', 75722652:'waffle', 75722699:'lollipop', 75722700:'diverging', 75749035:'bubbles', 75722701:'histogram'
+};
+function resolveViz(q){ return VIZ[q.pollId] || (q.type==='rating' ? 'histogram' : q.type==='multi' ? 'lollipop' : 'bars'); }
+
+const REORDER = { 75722650: [2,0,3,1] };
+
+const INTRO = {
+ "Costs & AI": {
+   eyebrow: 'CTO Roundtable · 2026 · Costs & AI',
+   title: 'How teams spend on AI',
+   lede: 'AI is still cheap enough that what a team spends reveals how it works, not what it is forced to pay. The room divided along four lines: budgets, documentation, return, and the freedom to switch models.',
+   stats: [
+     { disp: '$175→$120', label: 'per-developer monthly spend after moving from API billing to subscriptions' },
+     { count: 77, suffix: '%', label: 'spend most of their budget on coding copilots' },
+     { count: 61, suffix: '%', label: 'run a single, centralized AI budget' },
+     { count: 3.7, suffix: '', label: 'average confidence in AI ROI, out of 5' }
+   ]
+ },
+ "Agents in Production": {
+   eyebrow: 'CTO Roundtable · 2026 · Agents in Production',
+   title: 'How teams run agents in production',
+   lede: 'Most teams already run agents in production. The harder part is reliability, security, and deciding how much to trust an agent before a human steps in.',
+   stats: [
+     { count: 81, suffix: '%', label: 'already run agents in production' },
+     { count: 70, suffix: '%', label: 'keep a human in the loop at key decisions' },
+     { count: 42, suffix: '%', label: 'have no formal security for agents yet' },
+     { count: 3.3, suffix: '', label: 'average production-readiness, out of 5' }
+   ]
+ },
+ "Team & Org": {
+   eyebrow: 'CTO Roundtable · 2026 · Team & Org',
+   title: 'How AI is reshaping the org',
+   lede: 'AI is changing who gets hired, what juniors do, and how engineering teams are built. The role is moving from writing code to framing problems and owning outcomes.',
+   stats: [
+     { disp: '1 → 0', label: 'engineers a single-engineer pod needs, today and within a few years' },
+     { count: 82, suffix: '%', label: 'now screen for product thinking over raw coding' },
+     { count: 52, suffix: '%', label: 'kept headcount flat as AI absorbed new hires' },
+     { count: 3.7, suffix: '', label: 'average AI-nativeness of the org, out of 5' }
+   ]
+ }
+};
+
+function pctStr(p){ return (p*100).toFixed(0)+'%'; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function tint(hex, t){
+  const c = parseInt(hex.slice(1),16);
+  let r=(c>>16)&255, g=(c>>8)&255, b=c&255;
+  r=Math.round(r+(255-r)*t); g=Math.round(g+(255-g)*t); b=Math.round(b+(255-b)*t);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+
+function renderLollipop(q, accent){
+  const max = Math.max(...q.options.map(o=>o.pct), 0.0001);
+  return '<div class="chart lolli">' + q.options.map((o,i)=>{
+    const w = (o.pct/max)*100;
+    const top = i===0 && o.count>0;
+    const col = top ? accent : tint(accent, 0.4);
+    return '<div class="lrow" data-idx="'+i+'">'
+      + '<div class="lhead"><span class="lt'+(top?' top':'')+'">'+esc(o.label)+'</span>'
+      + '<span class="lv">'+pctStr(o.pct)+' · '+o.count+'</span></div>'
+      + '<div class="ltrack"><div class="lstem" data-w="'+w+'" style="background:'+col+'"></div>'
+      + '<div class="ldot" data-w="'+w+'" style="background:'+col+'"></div></div></div>';
+  }).join('') + '</div>';
+}
+
+function renderDiverging(q, accent){
+  const order = REORDER[q.pollId] || q.options.map((_,i)=>i);
+  const opts = order.map(i=>q.options[i]).filter(o=>o.count>0);
+  const n = opts.length, total = opts.reduce((s,o)=>s+o.count,0) || 1;
+  const track = '<div class="distbar-track div-track">' + opts.map((o,j)=>{
+    o._color = tint(accent, n<=1?0:(j/(n-1))*0.62);
+    const basis = (o.count/total)*100;
+    return '<div class="distbar-seg" data-idx="'+q.options.indexOf(o)+'" data-basis="'+basis+'" style="background:'+o._color+'" title="'+esc(o.label)+'"></div>';
+  }).join('') + '<div class="div-tick"></div></div>';
+  const legend = '<div class="distbar-legend">' + opts.map(o=>
+    '<div class="distbar-li" data-idx="'+q.options.indexOf(o)+'"><span class="sw" style="background:'+o._color+'"></span>'
+    + '<span class="t">'+esc(o.label)+'</span> <span class="v">'+pctStr(o.pct)+'</span></div>'
+  ).join('') + '</div>';
+  return '<div class="chart diverging">'+track+legend+'</div>';
+}
+
+function renderBubbles(q, accent){
+  const opts = q.options.filter(o=>o.count>0);
+  const n = opts.length, maxC = Math.max(...opts.map(o=>o.count));
+  let k = 22/Math.sqrt(maxC);
+  let rads = opts.map(o=>Math.sqrt(o.count)*k);
+  const gap = 14;
+  let totalW = rads.reduce((s,r)=>s+2*r,0) + gap*(n-1);
+  if(totalW > 296){ const sc = 296/totalW; rads = rads.map(r=>r*sc); }
+  totalW = rads.reduce((s,r)=>s+2*r,0) + gap*(n-1);
+  let x = (300-totalW)/2; const cy = 46;
+  let circles = '', labels = '';
+  opts.forEach((o,j)=>{
+    const r = rads[j], cx = x + r;
+    o._color = tint(accent, n<=1?0:(j/(n-1))*0.6);
+    const idx = q.options.indexOf(o);
+    circles += '<circle data-idx="'+idx+'" cx="'+cx.toFixed(1)+'" cy="'+cy+'" r="'+r.toFixed(1)+'" fill="'+o._color+'"/>';
+    labels += '<text data-idx="'+idx+'" x="'+cx.toFixed(1)+'" y="86" text-anchor="middle" style="fill:var(--ink-soft)" font-size="11">'+pctStr(o.pct)+'</text>';
+    x += 2*r + gap;
+  });
+  const legend = '<div class="distbar-legend">' + opts.map(o=>
+    '<div class="distbar-li" data-idx="'+q.options.indexOf(o)+'"><span class="sw" style="background:'+o._color+'"></span>'
+    + '<span class="t">'+esc(o.label)+'</span></div>'
+  ).join('') + '</div>';
+  return '<div class="chart bubbles"><svg viewBox="0 0 300 96" style="width:100%;height:auto">'+circles+labels+'</svg>'+legend+'</div>';
+}
+
+function renderHistogram(q, accent){
+  const byLvl = {}; q.options.forEach(o=>byLvl[o.label]=o);
+  const counts = []; for(let l=1;l<=5;l++) counts.push((byLvl[String(l)]||{count:0}).count);
+  const maxC = Math.max(...counts, 1);
+  let cols = '';
+  for(let l=1;l<=5;l++){
+    const c = counts[l-1], h = Math.max(2, (c/maxC)*84);
+    cols += '<div class="hcol"><span class="hc-n">'+c+'</span>'
+      + '<div class="hbar" data-h="'+h.toFixed(0)+'" style="background:'+tint(accent, 0.1+0.12*(5-l))+'"></div>'
+      + '<span class="hc-l">'+l+'</span></div>';
+  }
+  const pos = ((q.avgRating-0.5)/5)*100;
+  return '<div class="chart histo">'
+    + '<div class="hscore"><div class="hnum" data-count="'+q.avgRating.toFixed(1)+'" style="color:'+accent+'">0.0</div><div class="hsub">avg of 5</div></div>'
+    + '<div class="hwrap"><div class="hcols">'+cols+'</div>'
+    + '<div class="havg" style="left:'+pos.toFixed(1)+'%"><span>avg '+q.avgRating.toFixed(1)+'</span></div></div></div>';
+}
+
+function renderBars(q, accent){
+  const max = Math.max(...q.options.map(o=>o.pct), 0.0001);
+  return '<div class="chart bars">' + q.options.map((o,i)=>{
+    const w = (o.pct/max)*100;
+    const top = i===0 && o.count>0;
+    const col = top ? accent : tint(accent, 0.42);
+    return '<div class="bar-row '+(top?'top':'')+'" data-idx="'+i+'">'
+      + '<div class="bar-label"><span class="txt">'+esc(o.label)+'</span>'
+      + '<span class="val">'+pctStr(o.pct)+' · '+o.count+'</span></div>'
+      + '<div class="track-bar"><div class="fill" data-w="'+w+'" style="background:'+col+'"></div></div></div>';
+  }).join('') + '</div>';
+}
+
+function renderWaffle(q, accent){
+  const opts = q.options.filter(o=>o.count>0);
+  const n = opts.length, total = opts.reduce((s,o)=>s+o.count,0) || 1;
+  const raw = opts.map(o=>o.count/total*100);
+  const base = raw.map(Math.floor);
+  const rem = 100 - base.reduce((a,b)=>a+b,0);
+  const fracs = raw.map((v,i)=>({i, f:v-base[i]})).sort((a,b)=>b.f-a.f);
+  for(let k=0;k<rem;k++) base[fracs[k % fracs.length].i]++;
+  opts.forEach((o,j)=>{ o._color = tint(accent, n<=1?0:(j/(n-1))*0.6); o._dots = base[j]; });
+  let dots = '';
+  opts.forEach((o,j)=>{ for(let d=0; d<o._dots; d++) dots += '<span class="wdot" data-idx="'+q.options.indexOf(o)+'" style="background:'+o._color+'"></span>'; });
+  const legend = '<div class="distbar-legend wlegend">' + opts.map(o=>
+    '<div class="distbar-li" data-idx="'+q.options.indexOf(o)+'"><span class="sw" style="background:'+o._color+'"></span>'
+    + '<span class="t">'+esc(o.label)+'</span> <span class="v">'+pctStr(o.pct)+'</span></div>'
+  ).join('') + '</div>';
+  return '<div class="chart waffle"><div class="wgrid">'+dots+'</div>'+legend+'</div>';
+}
+
+function card(q, accent){
+  const viz = resolveViz(q);
+  let body;
+  if(viz==='histogram') body = renderHistogram(q, accent);
+  else if(viz==='waffle') body = renderWaffle(q, accent);
+  else if(viz==='lollipop') body = renderLollipop(q, accent);
+  else if(viz==='bars') body = renderBars(q, accent);
+  else if(viz==='bubbles') body = renderBubbles(q, accent);
+  else body = renderDiverging(q, accent);
+  const ins = INSIGHTS[q.pollId] ? '<div class="insight">'+INSIGHTS[q.pollId]+'</div>' : '';
+  return '<div class="card" style="--card-accent:'+accent+';--insight-bg:'+tint(accent,0.93)+'">'
+    + '<div class="q-head"><div class="q-title">'+esc(q.question)+'</div>'
+    + '<div class="q-meta">'+q.totalVotes+' votes</div></div>'
+    + '<span class="q-tag tag-'+q.type+'">'+tagText[q.type]+'</span>'+body+ins+'</div>';
+}
+
+function introSlide(seg, accent){
+  const intro = INTRO[seg]; if(!intro) return '';
+  const stats = (intro.stats||[]).map(s=>{
+    const num = ('count' in s)
+      ? '<div class="n" data-count="'+s.count+'" data-suffix="'+(s.suffix||'')+'">0'+(s.suffix||'')+'</div>'
+      : '<div class="n">'+s.disp+'</div>';
+    return '<div class="stat">'+num+'<div class="l">'+s.label+'</div></div>';
+  }).join('');
+  const strip = stats ? '<div class="stat-strip">'+stats+'</div>' : '';
+  return '<div class="slide-title">'
+    + '<div class="eyebrow" style="color:'+accent+'">'+intro.eyebrow+'</div>'
+    + '<h1>'+intro.title+'</h1>'
+    + '<p class="lede">'+intro.lede+'</p>'
+    + strip + '</div>';
+}
+
+// ===== build slides for the chosen segment =====
+const meta = SEG_META[SEGMENT];
+const accent = meta.accent;
+const questions = DATA[SEGMENT];
+const trackEl = document.getElementById('track');
+const dotsEl = document.getElementById('dots');
+const deckEl = document.getElementById('deck');
+const counterEl = document.getElementById('counter');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+
+const slidesHtml = [];
+slidesHtml.push('<div class="slide intro-slide" data-slide="0">'+introSlide(SEGMENT, accent)+'</div>');
+questions.forEach((q,i)=>{
+  slidesHtml.push('<div class="slide q-slide" data-slide="'+(i+1)+'">'+card(q, accent)+'</div>');
+});
+trackEl.innerHTML = slidesHtml.join('');
+
+const slides = Array.from(trackEl.querySelectorAll('.slide'));
+const N = slides.length;
+
+// dots
+slides.forEach((_,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' on':'');
+  d.setAttribute('aria-label','Go to slide '+(i+1));
+  d.onclick = ()=>go(i);
+  dotsEl.appendChild(d);
+});
+
+// cross-highlight: hovering a slice/bar/legend lights its twins and dims the rest
+function setHL(chart, idx){
+  chart.classList.add('hl-on');
+  chart.querySelectorAll('[data-idx]').forEach(el=>{
+    const match = el.dataset.idx===idx;
+    el.classList.toggle('hl', match);
+    el.classList.toggle('dim', !match);
+  });
+}
+function clearHL(chart){
+  chart.classList.remove('hl-on');
+  chart.querySelectorAll('[data-idx]').forEach(el=>el.classList.remove('hl','dim'));
+}
+trackEl.addEventListener('mouseover', e=>{
+  const t = e.target.closest('[data-idx]'); if(!t) return;
+  const chart = t.closest('.chart'); if(!chart) return;
+  setHL(chart, t.dataset.idx);
+});
+trackEl.querySelectorAll('.chart').forEach(ch=>ch.addEventListener('mouseleave', ()=>clearHL(ch)));
+
+function countUp(el){
+  if(el.dataset.done) return; el.dataset.done='1';
+  const target = parseFloat(el.dataset.count);
+  const dec = el.dataset.count.indexOf('.')>=0 ? 1 : 0;
+  const suffix = el.dataset.suffix || '';
+  const dur = 850; let start = null;
+  function step(ts){ if(start===null) start = ts;
+    const p = Math.min((ts-start)/dur, 1), e = 1-Math.pow(1-p,3);
+    el.textContent = (target*e).toFixed(dec)+suffix;
+    if(p<1) requestAnimationFrame(step); else el.textContent = target.toFixed(dec)+suffix;
+  }
+  requestAnimationFrame(step);
+}
+
+function resetSlide(slide){
+  slide.querySelectorAll('.fill').forEach(f=>f.style.width='0');
+  slide.querySelectorAll('.distbar-seg').forEach(s=>s.style.flexBasis='0%');
+  slide.querySelectorAll('.lstem').forEach(s=>s.style.width='0');
+  slide.querySelectorAll('.ldot').forEach(d=>d.style.left='0');
+  slide.querySelectorAll('.hbar').forEach(b=>b.style.height='0');
+  slide.querySelectorAll('[data-count]').forEach(el=>{ el.dataset.done=''; el.textContent = el.dataset.suffix ? '0'+el.dataset.suffix : (el.dataset.count.indexOf('.')>=0?'0.0':'0'); });
+}
+function animateSlide(slide){
+  slide.querySelectorAll('.fill').forEach(f=>{ requestAnimationFrame(()=>{ f.style.width = f.dataset.w + '%'; }); });
+  slide.querySelectorAll('.distbar-seg').forEach(s=>{ requestAnimationFrame(()=>{ s.style.flexBasis = s.dataset.basis + '%'; }); });
+  slide.querySelectorAll('.lstem').forEach(s=>{ requestAnimationFrame(()=>{ s.style.width = s.dataset.w + '%'; }); });
+  slide.querySelectorAll('.ldot').forEach(d=>{ requestAnimationFrame(()=>{ d.style.left = d.dataset.w + '%'; }); });
+  slide.querySelectorAll('.hbar').forEach(b=>{ requestAnimationFrame(()=>{ b.style.height = b.dataset.h + 'px'; }); });
+  slide.querySelectorAll('[data-count]').forEach(countUp);
+}
+
+let current = 0;
+function go(i){
+  i = Math.max(0, Math.min(N-1, i));
+  current = i;
+  trackEl.style.transform = 'translateX('+(-i*100)+'%)';
+  dotsEl.querySelectorAll('.dot').forEach((d,j)=>d.classList.toggle('on', j===i));
+  counterEl.textContent = (i+1) + ' / ' + N;
+  prevBtn.disabled = i===0;
+  nextBtn.disabled = i===N-1;
+  resetSlide(slides[i]);
+  animateSlide(slides[i]);
+}
+
+prevBtn.onclick = ()=>go(current-1);
+nextBtn.onclick = ()=>go(current+1);
+
+// keyboard
+deckEl.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight'){ e.preventDefault(); go(current+1); }
+  else if(e.key==='ArrowLeft'){ e.preventDefault(); go(current-1); }
+});
+document.addEventListener('keydown', e=>{
+  if(e.target.closest('.deck')) return; // handled above
+  if(e.key==='ArrowRight') go(current+1);
+  else if(e.key==='ArrowLeft') go(current-1);
+});
+
+// touch swipe
+let tsx=0, tsy=0, swiping=false;
+deckEl.addEventListener('touchstart', e=>{ tsx=e.touches[0].clientX; tsy=e.touches[0].clientY; swiping=true; }, {passive:true});
+deckEl.addEventListener('touchend', e=>{
+  if(!swiping) return; swiping=false;
+  const dx = e.changedTouches[0].clientX - tsx;
+  const dy = e.changedTouches[0].clientY - tsy;
+  if(Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)){
+    if(dx < 0) go(current+1); else go(current-1);
+  }
+}, {passive:true});
+
+// init
+go(0);
+</script>
+</body>
+</html>
