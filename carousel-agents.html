@@ -16,7 +16,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg);
     color: var(--ink); line-height: 1.5; -webkit-font-smoothing: antialiased; }
-  .wrap { max-width: 920px; margin: 0 auto; padding: 40px 24px 56px; }
+  .wrap { max-width: 1082px; margin: 0 auto; padding: 40px 16px 56px; }
   .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.12em;
     text-transform: uppercase; color: var(--brand); margin-bottom: 10px; }
   h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 10px; color: var(--navy); }
@@ -24,15 +24,14 @@
 
   /* ---- deck / carousel ---- */
   /* --ar sets the uniform slide aspect ratio (width / height). Change it here. */
-  .deck { --ar: 3 / 2; position: relative; overflow: hidden; touch-action: pan-y;
-    aspect-ratio: var(--ar); }
+  .deck { width: 1050px; height: 600px; max-width: 100%; margin: 0 auto; position: relative; overflow: hidden; touch-action: pan-y; }
   .track { display: flex; height: 100%; transition: transform .5s cubic-bezier(.22,.61,.36,1); }
   .slide { flex: 0 0 100%; max-width: 100%; height: 100%; padding: 10px 8px;
     display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
   .slide .card { margin-bottom: 0; width: 100%; }
   /* question slides: card fills the frame, its content vertically centred */
   .q-slide .card { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; }
-  @media (max-width: 560px) { .deck { --ar: 3 / 4; } }
+  /* deck is a fixed 1050 x 600 frame */
 
   /* slide title (intro) */
   .slide-title { padding-top: 6px; }
